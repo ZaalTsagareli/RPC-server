@@ -33,7 +33,5 @@ class HttpServer implements Transport {
 }
 const transports = [new TcpServer(3000), new HttpServer(3001)];
 const rcpServer = new RCPServer(transports);
-ო9ლკ;
-``;
 
 rcpServer.run();
