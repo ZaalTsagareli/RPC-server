@@ -26,7 +26,7 @@ export class RCPServer {
     if (filtered.size !== this.ports.length) {
       throw Error("ports are not identic");
     }
-    this.transport.map((data) => {
+    this.transport.forEach((data) => {
       data.onData(this.handleRequest.bind(this));
       data.start();
     });
