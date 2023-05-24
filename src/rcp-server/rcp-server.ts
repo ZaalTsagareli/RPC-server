@@ -32,6 +32,8 @@ export class RCPServer {
     });
   }
 
+  private removeTransport(transport: Transport) {}
+
   private methodInRequestExsists(methodName) {
     return (
       this.methods[methodName] &&
@@ -82,6 +84,4 @@ export class RCPServer {
   public addTransport(transport: Transport): void {
     this.transport.push(transport);
   }
-
-  public setMethods(methods: Function[]) {}
 }

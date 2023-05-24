@@ -4,6 +4,7 @@ export class HttpServer implements Transport {
   protocol: string;
 
   port: number;
+
   private handler: Function;
 
   constructor(port: number) {
@@ -27,6 +28,7 @@ export class HttpServer implements Transport {
         res.end(JSON.stringify(this.handler(request)));
       });
     });
+
     httpServer.listen(this.port, "localhost", () => {
       console.log("httpserver started");
     });
