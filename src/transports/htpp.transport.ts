@@ -1,22 +1,22 @@
+import { promisify } from "util";
 import { Transport } from "../interfaces/transport-interface";
 import http from "http";
+
 export class HttpServer implements Transport {
   protocol: string;
 
   port: number;
 
+  private server: http.Server<
+    typeof http.IncomingMessage,
+    typeof http.ServerResponse
+  >;
+
   private handler: Function;
 
   constructor(port: number) {
     this.port = port;
-  }
-
-  onData(handler: (request) => {}) {
-    this.handler = handler;
-  }
-
-  start(): void {
-    const httpServer = http.createServer((req, res) => {
+    this.server = http.createServer((req, res) => {
       let data = "";
       req.on("data", (chunk) => {
         data += chunk;
@@ -28,9 +28,27 @@ export class HttpServer implements Transport {
         res.end(JSON.stringify(this.handler(request)));
       });
     });
+  }
 
-    httpServer.listen(this.port, "localhost", () => {
-      console.log("httpserver started");
-    });
+  showDown() {
+    console.log("aqvar");
+    if (this.server.listening) {
+      console.log("closing");
+      this.server.close(() => {
+        console.log("httpserver closed");
+      });
+    }
+  }
+
+  onData(handler: (request) => {}) {
+    this.handler = handler;
+  }
+
+  async start(): Promise<void> {
+    const promisifiedListen = promisify(this.server.listen).bind(this.server);
+    await promisifiedListen(this.port);
+    // this.server.listen(this.port, "localhost", () => {
+    //   console.log("httpserver started");
+    // });
   }
 }

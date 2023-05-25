@@ -12,6 +12,7 @@ export class RCPServer {
   constructor(transport: Transport[]) {
     this.transport = transport;
     this.ports = transport.map((data) => data.port);
+    this.expose({ ping: () => true });
   }
 
   expose(methods: Methods) {
@@ -21,18 +22,27 @@ export class RCPServer {
     };
   }
 
-  public run() {
+  public async run() {
     const filtered = new Set(this.ports);
     if (filtered.size !== this.ports.length) {
       throw Error("ports are not identic");
     }
-    this.transport.forEach((data) => {
-      data.onData(this.handleRequest.bind(this));
-      data.start();
-    });
+    await Promise.all([
+      this.transport.map((data) => {
+        data.onData(this.handleRequest.bind(this));
+        data.start();
+      }),
+    ]);
   }
 
-  private removeTransport(transport: Transport) {}
+  public removeTransport(transport: Transport) {
+    let index = this.transport.indexOf(transport);
+    if (index !== -1) {
+      console.log("removing");
+      this.transport[index].showDown();
+      this.transport.splice(index, 1);
+    }
+  }
 
   private methodInRequestExsists(methodName) {
     return (
@@ -43,7 +53,6 @@ export class RCPServer {
   }
 
   private handleRequest(request) {
-    console.log("sworia");
     const isRequest = request.hasOwnProperty("method");
     if (!isRequest) return;
 

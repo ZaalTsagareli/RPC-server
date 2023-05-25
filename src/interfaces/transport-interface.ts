@@ -4,4 +4,6 @@ export interface Transport {
 
   start();
   onData(handler: Function);
+
+  showDown();
 }

@@ -6,9 +6,18 @@ const transports = [new TcpServer(3000)];
 
 const rcpServer = new RCPServer(transports);
 
-rcpServer.addTransport(new HttpServer(3001));
+const http = new HttpServer(3001);
 
-rcpServer.expose({ add: (a, b) => a + b, mines: (a, b) => a - b });
+const main = async () => {
+  rcpServer.addTransport(http);
 
-rcpServer.expose({ mult: (a, b) => a * b });
-rcpServer.run();
+  rcpServer.expose({ add: (a, b) => a + b, mines: (a, b) => a - b });
+
+  rcpServer.expose({ mult: (a, b) => a * b });
+
+  await rcpServer.run();
+
+  rcpServer.removeTransport(http);
+};
+
+main();
