@@ -1,5 +1,10 @@
-export interface JsonResult {
-  jsonrpc: "2.0";
-  id: string;
-  result: string;
+export interface JSONRPCResponse {
+  jsonrpc: string;
+  result?: any;
+  error?: {
+    code: number;
+    message: string;
+    data?: any;
+  };
+  id: string | number | null;
 }
